@@ -3,6 +3,7 @@ import { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import axios from "axios";
 import SearchBar from "../SearchBar/SearchBar";
+import MovieGrid from "../MovieGrid/MovieGrid";
 const TOKEN = import.meta.env.VITE_TMDB_TOKEN;
 
 function App() {
@@ -12,7 +13,7 @@ function App() {
       setMovies([]);
       const { data } = await axios.get("https://api.themoviedb.org/3/search/movie", {
         params: {
-          query: query,
+          query,
         },
         headers: {
           Authorization: `Bearer ${TOKEN}`,
@@ -31,9 +32,8 @@ function App() {
     <>
       <Toaster position="top-right" />
       <SearchBar onSubmit={handleSubmit} />
-      {movies.map((movie: any) => (
-        <div key={movie.id}>{movie.title}</div>
-      ))}
+      
+      {movies.length > 0 && <MovieGrid movies={movies} />}
     </>
   );
 }
