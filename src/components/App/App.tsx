@@ -1,14 +1,13 @@
 
 import { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
-import axios from "axios";
 import SearchBar from "../SearchBar/SearchBar";
 import MovieGrid from "../MovieGrid/MovieGrid";
 import type { Movie } from "../../types/movie";
 import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import MovieModal from "../MovieModal/MovieModal";
-const TOKEN = import.meta.env.VITE_TMDB_TOKEN;
+import { fetchMovies } from "../../services/movieService";
 
 function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -26,19 +25,12 @@ function App() {
       setIsLoading(true);
       setIsError(false);
       setMovies([]);
-      const { data } = await axios.get("https://api.themoviedb.org/3/search/movie", {
-        params: {
-          query,
-        },
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
-      if (data.results.length === 0) {
+      const results = await fetchMovies(query);
+      if (results.length === 0) {
         toast.error("No movies found for your request.");
         return;
       }
-      setMovies(data.results);
+      setMovies(results);
     } catch (error) {
       console.error(error);
       setIsError(true);
